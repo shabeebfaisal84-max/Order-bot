@@ -1,3 +1,4 @@
+from database import cursor, conn
 from telegram import ReplyKeyboardMarkup, Update
 from telegram.ext import (
     Application,
@@ -30,7 +31,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 اختر الخدمة التي تريدها من الأزرار بالأسفل.
 """
 
-    await update.message.reply_text(
+user = update.effective_user
+
+cursor.execute(
+    "INSERT OR IGNORE INTO users (telegram_id, name) VALUES (?, ?)",
+    (user.id, user.full_name)
+)
+conn.commit()    await update.message.reply_text(
         text,
         reply_markup=reply_markup
     )
